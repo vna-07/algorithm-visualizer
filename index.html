@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AlgoVis — Algorithm Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ══ SIDEBAR ══════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">∑</div>
+      <div>
+        <div class="logo-name">AlgoVis</div>
+        <div class="logo-version">v1.0.0</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Modes</div>
+      <div class="nav-item active" data-mode="sorting">
+        <span class="nav-icon">↕</span> Sorting
+      </div>
+      <div class="nav-item" data-mode="pathfinding">
+        <span class="nav-icon">◈</span> Pathfinding
+      </div>
+      <div class="nav-item" data-mode="string">
+        <span class="nav-icon">⌕</span> String Search
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="theme-btn" id="theme-toggle" aria-label="Toggle theme">
+        <span class="theme-icon-light">☀ Light</span>
+        <span class="theme-icon-dark">☾ Dark</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══ MAIN ═════════════════════════════════════════════ -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Sorting Visualizer</div>
+        <div class="topbar-sub" id="topbar-sub">bubble sort · merge sort · quick sort</div>
+      </div>
+      <div class="topbar-actions">
+        <div class="chip" id="chip-complexity">O(n²)</div>
+        <div class="chip" id="chip-status">idle</div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Stats row -->
+      <div class="stats-row">
+        <div class="stat-card" style="--card-accent:var(--orange)">
+          <div class="stat-label" data-stat-label="a">Comparisons</div>
+          <div class="stat-value" id="stat-comparisons">0</div>
+          <div class="stat-sub">this run</div>
+        </div>
+        <div class="stat-card" style="--card-accent:var(--blue)">
+          <div class="stat-label" data-stat-label="b">Swaps</div>
+          <div class="stat-value" id="stat-swaps">0</div>
+          <div class="stat-sub">this run</div>
+        </div>
+        <div class="stat-card" style="--card-accent:var(--grey)">
+          <div class="stat-label">Size</div>
+          <div class="stat-value" id="stat-size">50</div>
+          <div class="stat-sub">elements</div>
+        </div>
+        <div class="stat-card" style="--card-accent:var(--beige-dark)">
+          <div class="stat-label">Time</div>
+          <div class="stat-value" id="stat-time">0ms</div>
+          <div class="stat-sub">elapsed</div>
+        </div>
+      </div>
+
+      <!-- ══ SORTING MODE ══════════════════════════════════ -->
+      <div id="mode-sorting" class="mode-panel">
+        <div class="workspace">
+          <div class="card viz-card">
+            <div class="card-header">
+              <div class="card-title">
+                <div class="card-icon">▶</div>
+                <span id="viz-title">Bubble Sort</span>
+              </div>
+              <div class="controls-inline">
+                <button class="ctrl-btn" id="btn-generate">⟳ Generate</button>
+                <button class="ctrl-btn primary" id="btn-play">▶ Play</button>
+                <button class="ctrl-btn" id="btn-reset">↺ Reset</button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="viz-area" id="viz-area"></div>
+            </div>
+          </div>
+          <div class="card controls-card">
+            <div class="card-header">
+              <div class="card-title"><div class="card-icon">⚙</div>Controls</div>
+            </div>
+            <div class="card-body controls-body">
+              <div class="ctrl-group">
+                <label class="ctrl-label">Array Size <span class="ctrl-val" id="lbl-size">50</span></label>
+                <input type="range" class="ctrl-slider" id="slider-size" min="10" max="150" value="50" />
+              </div>
+              <div class="ctrl-group">
+                <label class="ctrl-label">Speed <span class="ctrl-val" id="lbl-speed">5</span></label>
+                <input type="range" class="ctrl-slider" id="slider-speed" min="1" max="10" value="5" />
+              </div>
+              <div class="ctrl-group">
+                <label class="ctrl-label">Algorithm</label>
+                <div class="algo-pills">
+                  <button class="algo-pill active" data-algo="bubble">Bubble</button>
+                  <button class="algo-pill" data-algo="merge">Merge</button>
+                  <button class="algo-pill" data-algo="quick">Quick</button>
+                </div>
+              </div>
+              <div class="legend">
+                <div class="legend-item"><span class="legend-dot" style="background:var(--orange)"></span>Comparing</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--blue)"></span>Swapping</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--green)"></span>Sorted</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--bar-default)"></span>Unsorted</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PATHFINDING MODE ══════════════════════════════ -->
+      <div id="mode-pathfinding" class="mode-panel" style="display:none">
+        <div class="workspace workspace-path">
+          <div class="card grid-card">
+            <div class="card-header">
+              <div class="card-title">
+                <div class="card-icon">◈</div>
+                <span id="path-viz-title">Dijkstra's Algorithm</span>
+              </div>
+              <div class="controls-inline">
+                <button class="ctrl-btn" id="btn-maze">⊞ Maze</button>
+                <button class="ctrl-btn" id="btn-clear-path">⊘ Clear Path</button>
+                <button class="ctrl-btn" id="btn-reset">↺ Reset</button>
+                <button class="ctrl-btn primary" id="btn-play">▶ Run</button>
+              </div>
+            </div>
+            <div class="card-body grid-body">
+              <div class="grid-area" id="grid-area"></div>
+            </div>
+          </div>
+          <div class="card controls-card">
+            <div class="card-header">
+              <div class="card-title"><div class="card-icon">⚙</div>Controls</div>
+            </div>
+            <div class="card-body controls-body">
+              <div class="ctrl-group">
+                <label class="ctrl-label">Algorithm</label>
+                <select class="ctrl-select" id="select-path-algo">
+                  <option value="dijkstra">Dijkstra's</option>
+                  <option value="astar">A* Search</option>
+                  <option value="bfs">BFS</option>
+                  <option value="dfs">DFS</option>
+                </select>
+              </div>
+              <div class="ctrl-group">
+                <label class="ctrl-label">Grid Size</label>
+                <select class="ctrl-select" id="select-grid-size">
+                  <option value="small">Small (15×25)</option>
+                  <option value="medium" selected>Medium (25×45)</option>
+                  <option value="large">Large (35×65)</option>
+                </select>
+              </div>
+              <div class="ctrl-group">
+                <label class="ctrl-label">Speed <span class="ctrl-val" id="lbl-speed-path">5</span></label>
+                <input type="range" class="ctrl-slider" id="slider-speed-path" min="1" max="10" value="5" />
+              </div>
+              <div class="ctrl-group">
+                <label class="ctrl-label">Draw Mode</label>
+                <div class="draw-btns">
+                  <button class="ctrl-btn active" data-draw="wall">⬛ Wall</button>
+                  <button class="ctrl-btn" data-draw="start">🟢 Start</button>
+                  <button class="ctrl-btn" data-draw="end">🔴 End</button>
+                  <button class="ctrl-btn" data-draw="weight">⚖ Weight</button>
+                </div>
+              </div>
+              <div class="ctrl-group">
+                <label class="ctrl-label" style="justify-content:space-between">
+                  Weighted Nodes
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-weight" />
+                    <span class="toggle-track"></span>
+                  </label>
+                </label>
+              </div>
+              <div class="legend">
+                <div class="legend-item"><span class="legend-dot" style="background:var(--green)"></span>Start</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--red)"></span>End</div>
+                <div class="legend-item"><span class="legend-dot" style="background:#1e293b"></span>Wall</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--blue-light)"></span>Visited</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--orange)"></span>Path</div>
+                <div class="legend-item"><span class="legend-dot" style="background:#fde68a"></span>Weight</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ STRING SEARCH MODE ════════════════════════════ -->
+      <div id="mode-string" class="mode-panel" style="display:none">
+        <div class="workspace workspace-string">
+
+          <!-- Visualizer card -->
+          <div class="card str-viz-card">
+            <div class="card-header">
+              <div class="card-title">
+                <div class="card-icon">⌕</div>
+                <span id="str-viz-title">Naive Search</span>
+              </div>
+              <div class="controls-inline">
+                <button class="ctrl-btn primary" id="btn-play-string">▶ Play</button>
+                <button class="ctrl-btn" id="btn-reset-string">↺ Reset</button>
+              </div>
+            </div>
+            <div class="card-body str-viz-body">
+
+              <!-- Text display -->
+              <div class="str-section-label">Text</div>
+              <div class="str-display" id="str-text-display"></div>
+
+              <!-- Pattern display -->
+              <div class="str-section-label" style="margin-top:.85rem">Pattern</div>
+              <div class="str-display str-display-pat" id="str-pat-display"></div>
+
+              <!-- LPS table (KMP only) -->
+              <div class="str-lps-row" id="str-lps-display" style="display:none"></div>
+
+              <!-- Inputs -->
+              <div class="str-inputs">
+                <div class="ctrl-group" style="flex:1">
+                  <label class="ctrl-label">Text</label>
+                  <input id="str-text-input" class="ctrl-input" type="text"
+                    placeholder="Enter text to search in..." spellcheck="false" autocomplete="off" />
+                </div>
+                <div class="ctrl-group" style="flex:1">
+                  <label class="ctrl-label">Pattern</label>
+                  <input id="str-pat-input" class="ctrl-input" type="text"
+                    placeholder="Pattern to find..." spellcheck="false" autocomplete="off" />
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Controls card -->
+          <div class="card controls-card">
+            <div class="card-header">
+              <div class="card-title"><div class="card-icon">⚙</div>Controls</div>
+            </div>
+            <div class="card-body controls-body">
+
+              <div class="ctrl-group">
+                <label class="ctrl-label">Algorithm</label>
+                <select class="ctrl-select" id="str-algo">
+                  <option value="naive">Naive Search</option>
+                  <option value="kmp">KMP</option>
+                </select>
+              </div>
+
+              <div class="ctrl-group">
+                <label class="ctrl-label">Sample Text</label>
+                <select class="ctrl-select" id="str-sample">
+                  <option value="dna">DNA Sequence</option>
+                  <option value="lorem">Lorem Ipsum</option>
+                  <option value="repeat">Repeated Pattern</option>
+                  <option value="binary">Binary String</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </div>
+
+              <div class="ctrl-group">
+                <label class="ctrl-label">Speed <span class="ctrl-val" id="lbl-speed-string">5</span></label>
+                <input type="range" class="ctrl-slider" id="slider-speed-string" min="1" max="10" value="5" />
+              </div>
+
+              <div class="legend">
+                <div class="legend-item"><span class="legend-dot" style="background:var(--orange)"></span>Comparing</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--green)"></span>Match</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--red)"></span>Mismatch</div>
+                <div class="legend-item"><span class="legend-dot" style="background:var(--blue)"></span>KMP Jump</div>
+                <div class="legend-item"><span class="legend-dot" style="background:#a78bfa"></span>Found</div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <footer class="site-footer">
+      <span>© 2026 Ayolela Vena. GitHun:vna-07</span>
+      <span class="footer-sep">·</span>
+      <span>MIT License</span>
+      <span class="footer-sep">·</span>
+      <span>AlgoVis — Algorithm Visualizer</span>
+    </footer>
+
+  </div><!-- /main -->
+
+  <script type="module" src="app.js"></script>
+  <script>
+    (function () {
+      var html  = document.documentElement;
+      var saved = localStorage.getItem('algovis-theme');
+      if (saved) html.setAttribute('data-theme', saved);
+      var btn = document.getElementById('theme-toggle');
+      if (btn) btn.addEventListener('click', function () {
+        var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('algovis-theme', next);
+      });
+    })();
+  </script>
+</body>
+</html>
